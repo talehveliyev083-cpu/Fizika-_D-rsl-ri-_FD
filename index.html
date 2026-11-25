@@ -1,229 +1,242 @@
-
 <!DOCTYPE html>
-<html lang="az">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="az"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Fizika Lab</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f2f5fa;color:#172033}
-header{background:#142b50;color:white;padding:22px 16px;text-align:center}
-header h1{margin:0;font-size:28px}
-header p{margin:8px 0 0;color:#cbd8ed}
-nav{display:flex;overflow-x:auto;background:#fff;padding:8px;gap:7px;position:sticky;top:0;z-index:2}
-nav button,.tools button,.action{border:0;border-radius:8px;padding:11px 14px;background:#e7edf7;color:#18345d;font-weight:bold;white-space:nowrap}
-nav button.active,.action{background:#1d5fc1;color:white}
-main{max-width:950px;margin:auto;padding:15px}
-.panel{display:none;background:white;border-radius:13px;padding:16px;box-shadow:0 2px 12px #15294b12}
-.panel.active{display:block}
-h2{color:#18345d;margin-top:0}
-.tools{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}
-canvas{width:100%;background:white;border:1px solid #ccd5e2;border-radius:8px;touch-action:none}
-input,textarea,select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:8px;margin:7px 0;font-size:16px}
-textarea{min-height:100px}
-label{font-weight:bold;display:block;margin-top:12px}
-.formula{font-size:25px;text-align:center;background:#edf4ff;padding:25px;border-radius:10px;margin-top:12px;overflow-wrap:anywhere}
-.lesson{padding:13px;border:1px solid #dce4ef;border-radius:9px;margin:10px 0}
-small{color:#64748b}
-</style>
-</head>
-<body>
-<header>
-<h1>⚛️ FİZİKA LAB</h1>
-<p>Fizikanı kəşf et, öyrən və təcrübə apar!</p>
-</header>
-
-<nav>
-<button class="active" onclick="showTab('board',this)">Lövhə</button>
-<button onclick="showTab('formula',this)">Düsturlar</button>
-<button onclick="showTab('graph',this)">Qrafik</button>
-<button onclick="showTab('motion',this)">Animasiya</button>
-<button onclick="showTab('lessons',this)">Dərslər</button>
-</nav>
-
+:root{--bg:#f3f6fb;--c:#fff;--t:#14213d;--m:#5b6b86;--p:#4f46e5;--p2:#06b6d4;--b:#e1e7f0;--ok:#16a34a;--no:#dc2626}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--t)}
+header{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:18px 16px;text-align:center}
+header h1{margin:0;font-size:1.6rem}header p{margin:4px 0 0;opacity:.9;font-size:.9rem}
+nav{position:sticky;top:0;z-index:9;background:var(--c);border-bottom:1px solid var(--b);display:flex;overflow-x:auto;gap:4px;padding:6px}
+nav button{flex:0 0 auto;border:0;background:none;padding:8px 12px;border-radius:10px;font-size:.85rem;color:var(--m);cursor:pointer;white-space:nowrap}
+nav button.on{background:var(--p);color:#fff}
+main{max-width:980px;margin:0 auto;padding:12px}
+section{display:none}section.on{display:block}
+.card{background:var(--c);border:1px solid var(--b);border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 2px 8px #0000000a}
+h2{margin:4px 0 12px}h3{margin:0 0 8px}
+.btn,.tb button{background:var(--p);color:#fff;border:0;border-radius:10px;padding:9px 14px;font-size:.9rem;cursor:pointer;margin:2px}
+.btn.g,.tb button{background:#eef0fb;color:var(--p)}.tb button.on{background:var(--p);color:#fff}.btn.r{background:#fee2e2;color:var(--no)}
+input,textarea,select{width:100%;padding:10px;border:1px solid var(--b);border-radius:10px;font:inherit;margin:4px 0;background:#fff}
+input[type=color]{width:44px;height:38px;padding:2px}input[type=range]{padding:0}input[type=radio]{width:auto;margin-right:8px}
+.tb{display:flex;flex-wrap:wrap;align-items:center;gap:2px;margin-bottom:8px}.tb input{width:auto;max-width:160px}
+canvas{width:100%;height:auto;border:1px solid var(--b);border-radius:12px;background:#fff;touch-action:none;display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.vc{cursor:pointer;border:1px solid var(--b);border-radius:12px;overflow:hidden;background:#fff}.vc img{width:100%;display:block}.vc div{padding:8px;font-size:.9rem}
+.vp{position:relative;padding-top:56.25%;margin-bottom:12px}.vp iframe{position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:12px}
+details{border:1px solid var(--b);border-radius:12px;margin-bottom:8px;background:#fff}summary{padding:12px;font-weight:600;cursor:pointer}
+.body{padding:0 12px 12px;white-space:pre-wrap;line-height:1.6}
+.q{margin-bottom:14px}.o{display:block;padding:9px;border:1px solid var(--b);border-radius:10px;margin:5px 0;cursor:pointer}
+.o.ok{background:#dcfce7;border-color:var(--ok)}.o.no{background:#fee2e2;border-color:var(--no)}
+.res{font-size:1.2rem;font-weight:700;margin-top:10px;padding:12px;border-radius:12px;background:#eef0fb}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--b)}.row span{overflow:hidden;text-overflow:ellipsis}
+.m{color:var(--m);font-size:.85rem}[hidden]{display:none!important}
+</style></head><body>
+<header><h1>⚛️ Fizika Lab</h1><p>Fizikanı görərək, çəkərək və sınayaraq öyrən</p></header>
+<nav id="nav"></nav>
 <main>
-<section id="board" class="panel active">
-<h2>Virtual lövhə</h2>
-<p>Şəkil, xətt, vektor və fiqurlar çək.</p>
-<div class="tools">
-<button onclick="tool='pen'">Qələm</button>
-<button onclick="tool='line'">Xətt</button>
-<button onclick="tool='arrow'">Vektor</button>
-<button onclick="tool='rect'">Düzbucaqlı</button>
-<button onclick="tool='circle'">Dairə</button>
-<button onclick="tool='erase'">Silgi</button>
-</div>
-<label>Rəng</label>
-<input type="color" id="color" value="#183f80">
-<label>Xətt qalınlığı</label>
-<input type="range" id="width" min="1" max="15" value="3">
-<canvas id="boardCanvas" width="900" height="500"></canvas>
-<div class="tools">
-<button class="action" onclick="undo()">Geri al</button>
-<button class="action" onclick="clearBoard()">Lövhəni təmizlə</button>
-<button class="action" onclick="saveBoard()">Şəkil kimi saxla</button>
-</div>
-</section>
 
-<section id="formula" class="panel">
-<h2>Düstur bölməsi</h2>
-<p>Burada fizika düsturlarını yaza bilərsən.</p>
-<label>Düstur</label>
-<input id="formulaInput" placeholder="Məsələn: F = m · a">
-<div class="formula" id="formulaView">F = m · a</div>
-<button class="action" onclick="showFormula()">Düsturu göstər</button>
-</section>
+<section id="s-board"><div class="card"><h2>🖍️ Virtual lövhə</h2>
+<div class="tb" id="tools"></div>
+<div class="tb"><input type="color" id="col" value="#111827"><input type="range" id="sz" min="1" max="12" value="3" style="max-width:110px">
+<button onclick="undo()">↩️ Geri</button><button onclick="clr()">🗑️ Təmizlə</button><button onclick="savePng()">💾 Yüklə</button></div>
+<div class="tb"><input id="ftxt" placeholder="Düstur: F = m·a" style="max-width:none;flex:1;min-width:150px">
+<span id="sym"></span></div>
+<p class="m">Düstur yazın, «Düstur» alətini seçib lövhədə istədiyiniz yerə toxunun.</p>
+<canvas id="bc" width="900" height="560"></canvas></div></section>
 
-<section id="graph" class="panel">
-<h2>Qrafik qurucu</h2>
-<p>y = kx + b funksiyasının qrafikini qur.</p>
-<label>k əmsalı</label>
-<input type="number" id="k" value="2">
-<label>b əmsalı</label>
-<input type="number" id="b" value="0">
-<button class="action" onclick="drawGraph()">Qrafiki çək</button>
-<canvas id="graphCanvas" width="900" height="450"></canvas>
-</section>
+<section id="s-video"><div class="card"><h2>🎬 Video dərslər</h2>
+<div id="vp" class="vp" hidden></div><div id="vl" class="grid"></div></div></section>
 
-<section id="motion" class="panel">
-<h2>Hərəkət animasiyası</h2>
-<p>Cismin hərəkətini müşahidə et.</p>
-<label>Sürət (şərti vahid)</label>
-<input type="range" id="speed" min="1" max="10" value="4">
-<canvas id="motionCanvas" width="900" height="300"></canvas>
-<div class="tools">
-<button class="action" onclick="startMotion()">Başlat</button>
-<button class="action" onclick="stopMotion()">Dayandır</button>
-<button class="action" onclick="resetMotion()">Sıfırla</button>
-</div>
-</section>
+<section id="s-lessons"><div class="card"><h2>📚 Dərslər</h2><div id="ll"></div></div></section>
 
-<section id="lessons" class="panel">
-<h2>Fizika dərsləri</h2>
-<p>Öz dərs başlıqlarını əlavə et. Bu siyahı hazırda yalnız bu cihazda saxlanılır.</p>
-<label>Dərsin adı</label>
-<input id="lessonTitle" placeholder="Məsələn: Nyutonun qanunları">
-<label>Dərsin mətni</label>
-<textarea id="lessonText" placeholder="Dərsin məzmununu yaz..."></textarea>
-<button class="action" onclick="addLesson()">Dərsi əlavə et</button>
-<div id="lessonList"></div>
-</section>
+<section id="s-tests"><div class="card"><h2>📝 Testlər</h2><div id="tl"></div><div id="tv" hidden></div></div></section>
+
+<section id="s-graph"><div class="card"><h2>📈 Qrafik qurucu</h2>
+<input id="fx" value="sin(x); x^2/5" placeholder="Məs: sin(x); x^2; 2*x+1">
+<p class="m">Bir neçə funksiyanı «;» ilə ayırın. İstifadə edin: + − * / ^ sin cos tan sqrt abs exp ln log pi e</p>
+<div class="tb"><button onclick="plot()">▶️ Çək</button><button onclick="zoom(.7)">➕</button><button onclick="zoom(1.4)">➖</button>
+<button onclick="pan(-1)">◀️</button><button onclick="pan(1)">▶️</button><button onclick="gr.x0=-10;gr.x1=10;plot()">⟲ Sıfırla</button></div>
+<div id="gerr" class="m" style="color:var(--no)"></div>
+<canvas id="gc" width="900" height="560"></canvas></div></section>
+
+<section id="s-anim"><div class="card"><h2>🎞️ Fizika animasiyaları</h2>
+<select id="asel" onchange="setAn()"></select>
+<label class="m" id="alab"></label><input type="range" id="apar" step="0.1">
+<div class="tb"><button onclick="aRun=!aRun;this.textContent=aRun?'⏸️ Dayan':'▶️ Davam'" id="apb">⏸️ Dayan</button><button onclick="aT=0">🔄 Yenidən</button></div>
+<canvas id="ac" width="700" height="380"></canvas></div></section>
+
+<section id="s-teacher"><div class="card" id="tlogin"><h2>👩‍🏫 Müəllim paneli</h2>
+<p class="m">Giriş kodunu daxil edin (ilkin kod: 1234 – daxil olandan sonra mütləq dəyişin).</p><p class="m" style="color:var(--no)">⚠️ <b>Təhlükəsizlik xəbərdarlığı:</b> bu kod real qoruma deyil, yalnız təsadüfi dəyişikliklərə qarşı «yumşaq kilid»dir. Sayt kodu hamıya açıqdır və kod brauzerdə yoxlanılır, bacarıqlı istifadəçi onu keçə bilər. Məxfi məlumat saxlamayın.</p>
+<input id="pin" type="password" placeholder="Kod"><button class="btn" onclick="login()">Daxil ol</button></div>
+<div id="tpanel" hidden>
+<div class="card"><h3>🔐 Giriş kodu</h3><p class="m" style="color:var(--no)">⚠️ Kod yalnız bu cihaz üçün dəyişir və real təhlükəsizlik təmin etmir.</p><input id="np" type="password" placeholder="Yeni kod (ən azı 4 simvol)"><button class="btn" onclick="changePin()">Kodu dəyiş</button></div>
+<div class="card"><h3>➕ Dərs əlavə et</h3><input id="lt" placeholder="Mövzu adı"><textarea id="lb" rows="5" placeholder="Dərsin izahı..."></textarea><button class="btn" onclick="addLesson()">Əlavə et</button></div>
+<div class="card"><h3>➕ Video əlavə et</h3><input id="vt" placeholder="Video adı"><input id="vu" placeholder="YouTube linki"><button class="btn" onclick="addVideo()">Əlavə et</button></div>
+<div class="card"><h3>➕ Test əlavə et</h3><input id="tt" placeholder="Testin adı">
+<textarea id="tq" rows="6" placeholder="Hər sətirdə bir sual:&#10;Sual | Variant A | Variant B | Variant C | Variant D | Düzgün nömrə&#10;Məs: Sürətin vahidi? | m/s | kg | N | J | 1"></textarea><button class="btn" onclick="addTest()">Əlavə et</button></div>
+<div class="card"><h3>🗂️ Mövcud məzmun</h3><div id="tm"></div>
+<button class="btn r" onclick="resetAll()">Hamısını ilkin vəziyyətə qaytar</button> <button class="btn g" onclick="logout()">Çıxış</button></div>
+</div></section>
 </main>
 
 <script>
-function showTab(id,btn){
- document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
- document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
- document.getElementById(id).classList.add('active');
- btn.classList.add('active');
- if(id==='graph')drawGraph();
-}
-let tool='pen',drawing=false,startX=0,startY=0,lastX=0,lastY=0;
-const canvas=document.getElementById('boardCanvas');
-const ctx=canvas.getContext('2d');
-let history=[];
-function saveHistory(){history.push(canvas.toDataURL());if(history.length>20)history.shift()}
-function pos(e){
- const r=canvas.getBoundingClientRect();
- return {x:(e.clientX-r.left)*canvas.width/r.width,y:(e.clientY-r.top)*canvas.height/r.height};
-}
-canvas.addEventListener('pointerdown',e=>{
- drawing=true;const p=pos(e);startX=lastX=p.x;startY=lastY=p.y;
- saveHistory();canvas.setPointerCapture(e.pointerId);
- if(tool==='pen'||tool==='erase'){ctx.beginPath();ctx.moveTo(p.x,p.y)}
-});
-canvas.addEventListener('pointermove',e=>{
- if(!drawing)return;
- const p=pos(e),color=document.getElementById('color').value;
- ctx.strokeStyle=tool==='erase'?'white':color;
- ctx.lineWidth=tool==='erase'?24:Number(document.getElementById('width').value);
- ctx.lineCap='round';ctx.lineJoin='round';
- if(tool==='pen'||tool==='erase'){ctx.lineTo(p.x,p.y);ctx.stroke();lastX=p.x;lastY=p.y}
-});
-canvas.addEventListener('pointerup',e=>{
- if(!drawing)return;drawing=false;
- const p=pos(e),dx=p.x-startX,dy=p.y-startY;
- ctx.strokeStyle=document.getElementById('color').value;
- ctx.lineWidth=Number(document.getElementById('width').value);
- ctx.lineCap='round';
- if(tool==='line'){ctx.beginPath();ctx.moveTo(startX,startY);ctx.lineTo(p.x,p.y);ctx.stroke()}
- if(tool==='arrow'){
-  const a=Math.atan2(dy,dx),head=18;
-  ctx.beginPath();ctx.moveTo(startX,startY);ctx.lineTo(p.x,p.y);
-  ctx.lineTo(p.x-head*Math.cos(a-.5),p.y-head*Math.sin(a-.5));
-  ctx.moveTo(p.x,p.y);ctx.lineTo(p.x-head*Math.cos(a+.5),p.y-head*Math.sin(a+.5));ctx.stroke();
- }
- if(tool==='rect'){ctx.strokeRect(startX,startY,dx,dy)}
- if(tool==='circle'){ctx.beginPath();ctx.ellipse(startX+dx/2,startY+dy/2,Math.abs(dx/2),Math.abs(dy/2),0,0,Math.PI*2);ctx.stroke()}
-});
-function undo(){
- if(!history.length)return;
- const img=new Image();img.onload=()=>{ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0)};
- img.src=history.pop();
-}
-function clearBoard(){saveHistory();ctx.clearRect(0,0,canvas.width,canvas.height)}
-function saveBoard(){
- const a=document.createElement('a');a.download='fizika-lab-lovhe.png';a.href=canvas.toDataURL();a.click();
-}
-function showFormula(){
- document.getElementById('formulaView').textContent=document.getElementById('formulaInput').value||'Düstur daxil edilməyib';
-}
-function drawGraph(){
- const c=document.getElementById('graphCanvas'),g=c.getContext('2d');
- const k=Number(document.getElementById('k').value),b=Number(document.getElementById('b').value);
- g.clearRect(0,0,c.width,c.height);
- const ox=c.width/2,oy=c.height/2,scale=35;
- g.strokeStyle='#e1e7ef';g.lineWidth=1;
- for(let x=0;x<c.width;x+=scale){g.beginPath();g.moveTo(x,0);g.lineTo(x,c.height);g.stroke()}
- for(let y=0;y<c.height;y+=scale){g.beginPath();g.moveTo(0,y);g.lineTo(c.width,y);g.stroke()}
- g.strokeStyle='#263b59';g.lineWidth=2;
- g.beginPath();g.moveTo(0,oy);g.lineTo(c.width,oy);g.moveTo(ox,0);g.lineTo(ox,c.height);g.stroke();
- g.strokeStyle='#1764c0';g.lineWidth=3;g.beginPath();
- for(let px=0;px<=c.width;px++){
-  const x=(px-ox)/scale,y=k*x+b,py=oy-y*scale;
-  if(px===0)g.moveTo(px,py);else g.lineTo(px,py);
- }
- g.stroke();
-}
-let ballX=35,animation=null;
-const mc=document.getElementById('motionCanvas'),mg=mc.getContext('2d');
-function paintBall(){
- mg.clearRect(0,0,mc.width,mc.height);
- mg.strokeStyle='#9aa9bd';mg.lineWidth=3;mg.beginPath();mg.moveTo(0,230);mg.lineTo(mc.width,230);mg.stroke();
- mg.fillStyle='#1764c0';mg.beginPath();mg.arc(ballX,200,25,0,Math.PI*2);mg.fill();
-}
-function moveBall(){
- ballX+=Number(document.getElementById('speed').value);
- if(ballX>mc.width+25)ballX=-25;
- paintBall();animation=requestAnimationFrame(moveBall);
-}
-function startMotion(){if(!animation)moveBall()}
-function stopMotion(){if(animation){cancelAnimationFrame(animation);animation=null}}
-function resetMotion(){stopMotion();ballX=35;paintBall()}
-paintBall();
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const DEF=()=>({lessons:[
+{t:'Sürət və təcil',b:'Sürət — cismin vahid zamanda getdiyi yoldur: v = s / t.\nTəcil — sürətin dəyişmə sürətidir: a = (v − v₀) / t.\nBərabərsürətli hərəkətdə a = 0, bərabəraz dəyişən hərəkətdə a = const.\nYol: s = v₀t + at²/2.'},
+{t:'Nyuton qanunları',b:'I qanun (ətalət): xarici qüvvə təsir etmirsə, cisim sükunətdə və ya bərabərsürətli düzxətli hərəkətdə qalır.\nII qanun: F = m·a.\nIII qanun: təsir qüvvəsi əks qüvvəyə bərabərdir: F₁ = −F₂.'},
+{t:'İş, güc və enerji',b:'İş: A = F·s·cosα.\nGüc: P = A / t.\nKinetik enerji: Ek = mv²/2.\nPotensial enerji: Ep = mgh.\nEnerjinin saxlanma qanunu: Ek + Ep = const.'},
+{t:'Om qanunu',b:'Dövrə hissəsi üçün cərəyan şiddəti gərginliklə düz, müqavimətlə tərs mütənasibdir: I = U / R.\nSıralı birləşmə: R = R₁ + R₂.\nParalel birləşmə: 1/R = 1/R₁ + 1/R₂.\nGüc: P = U·I.'}],
+videos:[],
+tests:[{title:'Mexanika əsasları',q:[
+{q:'Sürətin SI vahidi hansıdır?',o:['m/s','kg','N','J'],a:0},
+{q:'Nyutonun II qanunu hansı düsturla ifadə olunur?',o:['F = m/a','F = m·a','F = m + a','F = a/m'],a:1},
+{q:'Yer səthində sərbəstdüşmə təcili təxminən nəyə bərabərdir?',o:['1,6 m/s²','3,7 m/s²','9,8 m/s²','25 m/s²'],a:2},
+{q:'Kinetik enerjinin düsturu hansıdır?',o:['mgh','mv²/2','F·s','U·I'],a:1},
+{q:'Qüvvənin SI vahidi hansıdır?',o:['Coul','Vatt','Paskal','Nyuton'],a:3}]}]});
+let D;try{D=JSON.parse(localStorage.getItem('fl'))||DEF()}catch(e){D=DEF()}
+if(!D||typeof D!='object')D=DEF();['lessons','videos','tests'].forEach(k=>{if(!Array.isArray(D[k]))D[k]=[]});
+D.videos=D.videos.filter(v=>v&&/^[\w-]{11}$/.test(v.id));D.tests=D.tests.filter(t=>t&&Array.isArray(t.q));D.lessons=D.lessons.filter(l=>l&&l.t);
+const save=()=>{try{localStorage.setItem('fl',JSON.stringify(D))}catch(e){}};
 
-function addLesson(){
- const title=document.getElementById('lessonTitle').value.trim();
- const content=document.getElementById('lessonText').value.trim();
- if(!title||!content){alert('Dərsin adını və mətnini yaz.');return}
- const lessons=JSON.parse(localStorage.getItem('fizikaLessons')||'[]');
- lessons.push({title,content});localStorage.setItem('fizikaLessons',JSON.stringify(lessons));
- document.getElementById('lessonTitle').value='';
- document.getElementById('lessonText').value='';showLessons();
-}
-function showLessons(){
- const lessons=JSON.parse(localStorage.getItem('fizikaLessons')||'[]');
- document.getElementById('lessonList').innerHTML=lessons.map((l,i)=>
-  `<div class="lesson"><b>${escapeHTML(l.title)}</b><p>${escapeHTML(l.content).replace(/\n/g,'<br>')}</p><button onclick="deleteLesson(${i})">Sil</button></div>`
- ).join('');
-}
-function escapeHTML(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function deleteLesson(i){
- const lessons=JSON.parse(localStorage.getItem('fizikaLessons')||'[]');
- lessons.splice(i,1);localStorage.setItem('fizikaLessons',JSON.stringify(lessons));showLessons();
-}
-showLessons();drawGraph();
-</script>
-</body>
-</html>
+/* Naviqasiya */
+const PG=[['board','🖍️ Lövhə'],['video','🎬 Videolar'],['lessons','📚 Dərslər'],['tests','📝 Testlər'],['graph','📈 Qrafik'],['anim','🎞️ Animasiya'],['teacher','👩‍🏫 Müəllim']];
+let page='board';
+$('#nav').innerHTML=PG.map(p=>`<button data-p="${p[0]}">${p[1]}</button>`).join('');
+function show(p){page=p;$$('section').forEach(s=>s.classList.toggle('on',s.id=='s-'+p));$$('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.p==p));if(p=='graph')plot();window.scrollTo(0,0)}
+$$('#nav button').forEach(b=>b.onclick=()=>show(b.dataset.p));
+
+/* 1. Virtual lövhə */
+const bc=$('#bc'),bx=bc.getContext('2d');let tool='pen',hist=[],drawing=0,st,last,base;
+const TL=[['pen','✏️ Qələm'],['eraser','🧽 Silgi'],['line','📏 Xətt'],['arrow','➡️ Vektor'],['rect','⬜ Düzbucaq'],['circle','⭕ Dairə'],['tri','🔺 Üçbucaq'],['text','∑ Düstur']];
+$('#tools').innerHTML=TL.map(t=>`<button data-t="${t[0]}" class="${t[0]=='pen'?'on':''}">${t[1]}</button>`).join('');
+$$('#tools button').forEach(b=>b.onclick=()=>{tool=b.dataset.t;$$('#tools button').forEach(x=>x.classList.toggle('on',x==b))});
+$('#sym').innerHTML='√ π Δ α β θ λ μ ω ² ³ ° ± × ÷ → ≈ ∑'.split(' ').map(s=>`<button onclick="$('#ftxt').value+='${s}'">${s}</button>`).join('');
+function bfill(){bx.fillStyle='#fff';bx.fillRect(0,0,bc.width,bc.height)}
+function push(){hist.push(bx.getImageData(0,0,bc.width,bc.height));if(hist.length>30)hist.shift()}
+bfill();push();
+const pos=e=>{const r=bc.getBoundingClientRect();return{x:(e.clientX-r.left)*bc.width/r.width,y:(e.clientY-r.top)*bc.height/r.height}};
+function shape(t,a,b){const s=+$('#sz').value;bx.beginPath();
+if(t=='line'||t=='arrow'){bx.moveTo(a.x,a.y);bx.lineTo(b.x,b.y);bx.stroke();
+if(t=='arrow'){const g=Math.atan2(b.y-a.y,b.x-a.x),h=12+s*2;bx.beginPath();bx.moveTo(b.x,b.y);bx.lineTo(b.x-h*Math.cos(g-.4),b.y-h*Math.sin(g-.4));bx.moveTo(b.x,b.y);bx.lineTo(b.x-h*Math.cos(g+.4),b.y-h*Math.sin(g+.4));bx.stroke()}}
+else if(t=='rect')bx.strokeRect(a.x,a.y,b.x-a.x,b.y-a.y);
+else if(t=='circle'){bx.ellipse((a.x+b.x)/2,(a.y+b.y)/2,Math.abs(b.x-a.x)/2,Math.abs(b.y-a.y)/2,0,0,7);bx.stroke()}
+else if(t=='tri'){bx.moveTo((a.x+b.x)/2,a.y);bx.lineTo(b.x,b.y);bx.lineTo(a.x,b.y);bx.closePath();bx.stroke()}}
+bc.onpointerdown=e=>{e.preventDefault();const p=pos(e),s=+$('#sz').value,c=$('#col').value;
+if(tool=='text'){const t=$('#ftxt').value;if(!t){alert('Əvvəlcə yuxarıdakı xanaya düstur yazın');return}bx.fillStyle=c;bx.font=(14+s*4)+'px Georgia,serif';bx.fillText(t,p.x,p.y);push();return}
+drawing=1;st=last=p;bc.setPointerCapture(e.pointerId);base=bx.getImageData(0,0,bc.width,bc.height);
+bx.strokeStyle=tool=='eraser'?'#fff':c;bx.lineWidth=tool=='eraser'?s*5:s;bx.lineCap=bx.lineJoin='round';
+if(tool=='pen'||tool=='eraser'){bx.beginPath();bx.moveTo(p.x,p.y);bx.lineTo(p.x+.1,p.y);bx.stroke()}};
+bc.onpointermove=e=>{if(!drawing)return;e.preventDefault();const p=pos(e);
+if(tool=='pen'||tool=='eraser'){bx.beginPath();bx.moveTo(last.x,last.y);bx.lineTo(p.x,p.y);bx.stroke();last=p}
+else{bx.putImageData(base,0,0);shape(tool,st,p)}};
+bc.onpointerup=bc.onpointercancel=()=>{if(drawing){drawing=0;push()}};
+function undo(){if(hist.length>1){hist.pop();bx.putImageData(hist[hist.length-1],0,0)}}
+function clr(){bfill();push()}
+function savePng(){const a=document.createElement('a');a.download='lovhe.png';a.href=bc.toDataURL();a.click()}
+
+/* 2. Videolar */
+const vid=u=>{const m=String(u).match(/(?:youtu\.be\/|v=|embed\/|shorts\/|live\/)([\w-]{11})/);return m?m[1]:null};
+function renderVideos(){$('#vl').innerHTML=D.videos.length?D.videos.map((v,i)=>`<div class="vc" onclick="play('${v.id}')"><img loading="lazy" src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt=""><div>▶️ ${esc(v.t)}</div></div>`).join(''):'<p class="m">Hələ video yoxdur. Müəllim panelindən YouTube linki əlavə edin.</p>'}
+function play(id){const p=$('#vp');p.hidden=0;p.innerHTML=`<iframe src="https://www.youtube.com/embed/${id}?rel=0" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen allow="accelerometer;autoplay;encrypted-media;picture-in-picture"></iframe>`;p.scrollIntoView({behavior:'smooth'})}
+
+/* 3. Dərslər */
+function renderLessons(){$('#ll').innerHTML=D.lessons.length?D.lessons.map((l,i)=>`<details ${i==0?'open':''}><summary>${esc(l.t)}</summary><div class="body">${esc(l.b)}</div></details>`).join(''):'<p class="m">Dərs yoxdur.</p>'}
+
+/* 4. Testlər */
+function renderTests(){$('#tv').hidden=1;$('#tl').hidden=0;$('#tl').innerHTML=D.tests.length?D.tests.map((t,i)=>`<div class="row"><span><b>${esc(t.title)}</b><br><small class="m">${t.q.length} sual</small></span><button class="btn" onclick="openTest(${i})">Başla</button></div>`).join(''):'<p class="m">Test yoxdur.</p>'}
+function openTest(i){const t=D.tests[i];$('#tl').hidden=1;$('#tv').hidden=0;
+$('#tv').innerHTML=`<button class="btn g" onclick="renderTests()">← Testlərə qayıt</button><h3 style="margin-top:10px">${esc(t.title)}</h3>`+t.q.map((q,n)=>`<div class="q"><b>${n+1}. ${esc(q.q)}</b>`+q.o.map((o,k)=>`<label class="o"><input type="radio" name="q${n}" value="${k}">${esc(o)}</label>`).join('')+'</div>').join('')+`<button class="btn" id="gb" onclick="grade(${i})">Nəticəni göstər</button><div id="res"></div>`}
+function grade(i){const t=D.tests[i];let s=0,u=0;
+t.q.forEach((q,n)=>{const labs=$$(`input[name=q${n}]`);if(!labs.some(r=>r.checked))u++;labs.forEach((r,k)=>{r.disabled=true;const l=r.parentElement;if(k==q.a)l.classList.add('ok');if(r.checked){if(k==q.a)s++;else l.classList.add('no')}})});
+const p=Math.round(s/t.q.length*100);
+$('#res').className='res';$('#res').innerHTML=`Nəticə: ${s} / ${t.q.length} düzgün (${p}%)${u?`<br><small>Cavablandırılmayan: ${u}</small>`:''}<br>${p>=85?'🏆 Əla!':p>=60?'👍 Yaxşı!':p>=40?'🙂 Orta, təkrar et.':'📖 Mövzunu təkrarla.'}`;$('#gb').hidden=1}
+
+/* 5. Qrafik qurucu */
+const gc=$('#gc'),gx=gc.getContext('2d'),gr={x0:-10,x1:10},COLS=['#4f46e5','#dc2626','#16a34a'];
+const FN={sin:Math.sin,cos:Math.cos,tan:Math.tan,asin:Math.asin,acos:Math.acos,atan:Math.atan,sqrt:Math.sqrt,cbrt:Math.cbrt,abs:Math.abs,exp:Math.exp,ln:Math.log,log:Math.log10,lg:Math.log10};
+const NAMES=[...Object.keys(FN),'pi','x','e'].sort((a,b)=>b.length-a.length);
+function comp(src){try{
+const s=src.toLowerCase().replace(/[−–]/g,'-').replace(/[×·]/g,'*').replace(/÷/g,'/').replace(/,/g,'.').replace(/\s+/g,'').replace(/\*\*/g,'^').replace(/^(y|f\(x\))=/,'');
+const T=[];
+for(let i=0;i<s.length;){const r=s.slice(i);let m;
+if(m=r.match(/^(\d+\.?\d*|\.\d+)(e[+-]?\d+)?/)){T.push({n:parseFloat(m[0])});i+=m[0].length}
+else if(m=r.match(/^[a-z]+/)){let w=m[0];i+=w.length;while(w){const k=NAMES.find(n=>w.startsWith(n));if(!k)throw 0;T.push({w:k});w=w.slice(k.length)}}
+else if('+-*/^()'.includes(r[0])){T.push({o:r[0]});i++}
+else throw 0}
+let p=0;const pk=()=>T[p],nx=()=>T[p++];
+const st=t=>t&&(t.n!==undefined||t.w||t.o=='(');
+const close=()=>{const t=nx();if(!t||t.o!=')')throw 0};
+function E(){let a=M();while(pk()&&(pk().o=='+'||pk().o=='-')){const o=nx().o,b=M(),l=a;a=o=='+'?x=>l(x)+b(x):x=>l(x)-b(x)}return a}
+function M(){let a=U();for(;;){const t=pk();if(t&&(t.o=='*'||t.o=='/')){nx();const b=U(),l=a;a=t.o=='*'?x=>l(x)*b(x):x=>l(x)/b(x)}else if(st(t)){const b=U(),l=a;a=x=>l(x)*b(x)}else return a}}
+function U(){const t=pk();if(t&&t.o=='-'){nx();const a=U();return x=>-a(x)}if(t&&t.o=='+'){nx();return U()}return P()}
+function P(){const a=A(),t=pk();if(t&&t.o=='^'){nx();const b=U();return x=>Math.pow(a(x),b(x))}return a}
+function A(){const t=nx();if(!t)throw 0;if(t.n!==undefined)return()=>t.n;
+if(t.o=='('){const a=E();close();return a}
+if(t.w=='x')return x=>x;if(t.w=='pi')return()=>Math.PI;if(t.w=='e')return()=>Math.E;
+if(FN[t.w]){const f=FN[t.w];let a;if(pk()&&pk().o=='('){nx();a=E();close()}else a=P();return x=>f(a(x))}
+throw 0}
+const f=E();if(p<T.length)throw 0;return f}catch(e){return null}}
+function plot(){const w=gc.width,h=gc.height,sc=w/(gr.x1-gr.x0),X=x=>(x-gr.x0)*sc,Y=y=>h/2-y*sc;
+gx.fillStyle='#fff';gx.fillRect(0,0,w,h);const r=gr.x1-gr.x0;let step=1,pw=Math.pow(10,Math.floor(Math.log10(r/8)));
+for(const m of[1,2,5,10]){step=m*pw;if(r/step<=12)break}
+gx.font='18px sans-serif';gx.fillStyle='#5b6b86';gx.lineWidth=1;
+for(let x=Math.ceil(gr.x0/step)*step;x<=gr.x1;x+=step){gx.strokeStyle='#e5eaf3';gx.beginPath();gx.moveTo(X(x),0);gx.lineTo(X(x),h);gx.stroke();gx.fillText(+x.toFixed(6),X(x)+3,Y(0)+16)}
+for(let y=Math.ceil(-h/2/sc/step)*step;y<=h/2/sc;y+=step){gx.strokeStyle='#e5eaf3';gx.beginPath();gx.moveTo(0,Y(y));gx.lineTo(w,Y(y));gx.stroke();if(Math.abs(y)>1e-9)gx.fillText(+y.toFixed(6),X(0)+4,Y(y)-3)}
+gx.strokeStyle='#14213d';gx.lineWidth=2;gx.beginPath();gx.moveTo(X(0),0);gx.lineTo(X(0),h);gx.moveTo(0,Y(0));gx.lineTo(w,Y(0));gx.stroke();
+let err='';
+$('#fx').value.split(';').filter(s=>s.trim()).slice(0,3).forEach((s,i)=>{const f=comp(s);if(!f){err+=`"${s.trim()}" düzgün deyil. `;return}
+gx.strokeStyle=COLS[i];gx.lineWidth=3;gx.beginPath();let pv=null;
+for(let px=0;px<=w;px++){const y=f(gr.x0+px/sc);if(!isFinite(y)||Math.abs(y)>1e4){pv=null;continue}const yy=Y(y);if(pv!==null&&Math.abs(yy-pv)<h)gx.lineTo(px,yy);else gx.moveTo(px,yy);pv=yy}gx.stroke()});
+$('#gerr').textContent=err}
+function zoom(k){const c=(gr.x0+gr.x1)/2,r=(gr.x1-gr.x0)/2*k;gr.x0=c-r;gr.x1=c+r;plot()}
+function pan(d){const s=(gr.x1-gr.x0)*.2*d;gr.x0+=s;gr.x1+=s;plot()}
+
+/* 6. Animasiyalar */
+const ac=$('#ac'),ax=ac.getContext('2d');let aT=0,aRun=true,cur='fall',lastTs=0;
+const G=()=>{ax.clearRect(0,0,700,380);ax.fillStyle='#eef6ff';ax.fillRect(0,0,700,380)};
+const ground=()=>{ax.fillStyle='#86c27a';ax.fillRect(0,350,700,30)};
+const ball=(x,y,r,c)=>{ax.fillStyle=c;ax.beginPath();ax.arc(x,y,r,0,7);ax.fill()};
+const info=s=>{ax.fillStyle='#14213d';ax.font='bold 16px sans-serif';ax.fillText(s,14,26)};
+const AN={
+fall:{n:'Sərbəst düşmə',l:'Təcil g (m/s²)',min:2,max:25,v:9.8,f(t,p){G();ground();const T=Math.sqrt(40/p),tt=Math.min(t%(T+1),T),y=.5*p*tt*tt;ball(350,30+y*15,14,'#ef4444');info(`t=${tt.toFixed(2)} s   h=${y.toFixed(1)} m   v=${(p*tt).toFixed(1)} m/s`)}},
+proj:{n:'Üfüqə bucaq altında atılma',l:'Bucaq (°)',min:10,max:80,v:45,f(t,p){G();ground();const a=p*Math.PI/180,v0=20,T=2*v0*Math.sin(a)/9.8,tt=Math.min(t%(T+1),T);
+for(let s=0;s<=tt;s+=.06)ball(40+v0*Math.cos(a)*s*15,350-(v0*Math.sin(a)*s-4.9*s*s)*15,2.5,'#94a3b8');
+const x=v0*Math.cos(a)*tt,y=v0*Math.sin(a)*tt-4.9*tt*tt;ball(40+x*15,350-y*15-8,9,'#4f46e5');info(`v₀=20 m/s  x=${x.toFixed(1)} m  y=${Math.max(0,y).toFixed(1)} m`)}},
+pend:{n:'Riyazi sarkac',l:'Uzunluq L (m)',min:.5,max:3,v:1.5,f(t,p){G();const w=Math.sqrt(9.8/p),th=.7*Math.cos(w*t),x=350+p*110*Math.sin(th),y=30+p*110*Math.cos(th);
+ax.strokeStyle='#14213d';ax.lineWidth=2;ax.beginPath();ax.moveTo(350,30);ax.lineTo(x,y);ax.stroke();ax.fillStyle='#14213d';ax.fillRect(300,24,100,6);ball(x,y,16,'#f59e0b');info(`Period T = ${(2*Math.PI*Math.sqrt(p/9.8)).toFixed(2)} s`)}},
+spr:{n:'Yay sarkacı',l:'Sərtlik k (N/m)',min:1,max:50,v:10,f(t,p){G();const w=Math.sqrt(p),x=380+70*Math.cos(w*t);ax.fillStyle='#64748b';ax.fillRect(20,140,12,120);
+ax.strokeStyle='#14213d';ax.lineWidth=3;ax.beginPath();ax.moveTo(32,200);for(let i=1;i<=14;i++)ax.lineTo(32+(x-32)*i/15,200+(i%2?-18:18));ax.lineTo(x,200);ax.stroke();
+ax.fillStyle='#4f46e5';ax.fillRect(x,170,60,60);info(`m = 1 kg   Period T = ${(2*Math.PI/w).toFixed(2)} s`)}}};
+$('#asel').innerHTML=Object.keys(AN).map(k=>`<option value="${k}">${AN[k].n}</option>`).join('');
+function setAn(){cur=$('#asel').value;const a=AN[cur],r=$('#apar');r.min=a.min;r.max=a.max;r.value=a.v;$('#alab').textContent=a.l;aT=0}
+function loop(ts){const dt=Math.min((ts-lastTs)/1000,.1);lastTs=ts;if(page=='anim'){if(aRun)aT+=dt;AN[cur].f(aT,+$('#apar').value)}requestAnimationFrame(loop)}
+
+/* 7. Müəllim paneli
+   DİQQƏT: Bu giriş kodu real təhlükəsizlik DEYİL. Sayt kodu hamıya açıqdır və yoxlama brauzerdə gedir.
+   Yalnız təsadüfi dəyişikliklərə qarşı "yumşaq kilid"dir. Məlumatlar isə hər cihazın öz brauzerində saxlanılır. */
+const PH='04ba2614b090f810482e36387c91f59b43ad60721c0ead89aa90d12e5dd5a0e6';let auth=false,fails=0,lockUntil=0;
+async function sha(s){try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('fizikalab:'+s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){return null}}
+async function login(){if(Date.now()<lockUntil)return alert('Çox yanlış cəhd. '+Math.ceil((lockUntil-Date.now())/1000)+' saniyə gözləyin.');
+const h=await sha($('#pin').value);if(!h)return alert('Brauzeriniz giriş yoxlamasını dəstəkləmir (HTTPS lazımdır).');
+let want=PH;try{want=localStorage.getItem('flpin')||PH}catch(e){}
+if(h===want){auth=true;fails=0;$('#pin').value='';renderTeacher()}else{if(++fails>=5){lockUntil=Date.now()+30000;fails=0}alert('Kod səhvdir')}}
+function logout(){auth=false;renderTeacher()}
+const need=()=>auth||(alert('Bu əməliyyat üçün müəllim kodu ilə daxil olun'),false);
+async function changePin(){if(!need())return;const a=$('#np').value;if(a.length<4)return alert('Kod ən azı 4 simvol olmalıdır');const h=await sha(a);if(!h)return alert('Brauzer dəstəkləmir');try{localStorage.setItem('flpin',h)}catch(e){}$('#np').value='';alert('Kod bu cihaz üçün dəyişdirildi ✅')}
+function renderTeacher(){$('#tlogin').hidden=auth;$('#tpanel').hidden=!auth;if(!auth)return;
+const rows=(arr,key,name,k)=>`<b>${name}</b>`+(arr.length?arr.map((x,i)=>`<div class="row"><span>${esc(x[key])}</span><button class="btn r" onclick="del('${k}',${i})">Sil</button></div>`).join(''):'<p class="m">Boşdur</p>');
+$('#tm').innerHTML=rows(D.lessons,'t','Dərslər','lessons')+rows(D.videos,'t','Videolar','videos')+rows(D.tests,'title','Testlər','tests')+'<br>'}
+function refresh(){save();renderVideos();renderLessons();renderTests();renderTeacher()}
+function del(k,i){if(need()&&confirm('Silinsin?')){D[k].splice(i,1);refresh()}}
+function addLesson(){if(!need())return;const t=$('#lt').value.trim(),b=$('#lb').value.trim();if(!t||!b)return alert('Mövzu və mətni doldurun');D.lessons.push({t,b});$('#lt').value=$('#lb').value='';refresh();alert('Dərs əlavə edildi ✅')}
+function addVideo(){if(!need())return;const t=$('#vt').value.trim(),id=vid($('#vu').value);if(!t)return alert('Video adını yazın');if(!id)return alert('YouTube linki düzgün deyil');D.videos.push({t,id});$('#vt').value=$('#vu').value='';refresh();alert('Video əlavə edildi ✅')}
+function addTest(){if(!need())return;const title=$('#tt').value.trim(),q=[];
+$('#tq').value.split('\n').forEach(l=>{const p=l.split('|').map(s=>s.trim());if(p.length<4)return;const a=parseInt(p[p.length-1])-1,o=p.slice(1,-1);if(p[0]&&a>=0&&a<o.length)q.push({q:p[0],o,a})});
+if(!title||!q.length)return alert('Test adını yazın və ən azı bir sualı düzgün formatda daxil edin');
+D.tests.push({title,q});$('#tt').value=$('#tq').value='';refresh();alert(`Test əlavə edildi ✅ (${q.length} sual)`)}
+function resetAll(){if(need()&&confirm('Bütün əlavə etdiklərinizi silib ilkin vəziyyətə qaytarmaq istəyirsiniz?')){D=DEF();refresh()}}
+
+/* Başlanğıc */
+renderVideos();renderLessons();renderTests();renderTeacher();setAn();show('board');requestAnimationFrame(loop);
+</script></body></html>
