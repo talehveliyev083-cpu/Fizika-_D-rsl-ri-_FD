@@ -1,0 +1,229 @@
+
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fizika Lab</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f2f5fa;color:#172033}
+header{background:#142b50;color:white;padding:22px 16px;text-align:center}
+header h1{margin:0;font-size:28px}
+header p{margin:8px 0 0;color:#cbd8ed}
+nav{display:flex;overflow-x:auto;background:#fff;padding:8px;gap:7px;position:sticky;top:0;z-index:2}
+nav button,.tools button,.action{border:0;border-radius:8px;padding:11px 14px;background:#e7edf7;color:#18345d;font-weight:bold;white-space:nowrap}
+nav button.active,.action{background:#1d5fc1;color:white}
+main{max-width:950px;margin:auto;padding:15px}
+.panel{display:none;background:white;border-radius:13px;padding:16px;box-shadow:0 2px 12px #15294b12}
+.panel.active{display:block}
+h2{color:#18345d;margin-top:0}
+.tools{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}
+canvas{width:100%;background:white;border:1px solid #ccd5e2;border-radius:8px;touch-action:none}
+input,textarea,select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:8px;margin:7px 0;font-size:16px}
+textarea{min-height:100px}
+label{font-weight:bold;display:block;margin-top:12px}
+.formula{font-size:25px;text-align:center;background:#edf4ff;padding:25px;border-radius:10px;margin-top:12px;overflow-wrap:anywhere}
+.lesson{padding:13px;border:1px solid #dce4ef;border-radius:9px;margin:10px 0}
+small{color:#64748b}
+</style>
+</head>
+<body>
+<header>
+<h1>⚛️ FİZİKA LAB</h1>
+<p>Fizikanı kəşf et, öyrən və təcrübə apar!</p>
+</header>
+
+<nav>
+<button class="active" onclick="showTab('board',this)">Lövhə</button>
+<button onclick="showTab('formula',this)">Düsturlar</button>
+<button onclick="showTab('graph',this)">Qrafik</button>
+<button onclick="showTab('motion',this)">Animasiya</button>
+<button onclick="showTab('lessons',this)">Dərslər</button>
+</nav>
+
+<main>
+<section id="board" class="panel active">
+<h2>Virtual lövhə</h2>
+<p>Şəkil, xətt, vektor və fiqurlar çək.</p>
+<div class="tools">
+<button onclick="tool='pen'">Qələm</button>
+<button onclick="tool='line'">Xətt</button>
+<button onclick="tool='arrow'">Vektor</button>
+<button onclick="tool='rect'">Düzbucaqlı</button>
+<button onclick="tool='circle'">Dairə</button>
+<button onclick="tool='erase'">Silgi</button>
+</div>
+<label>Rəng</label>
+<input type="color" id="color" value="#183f80">
+<label>Xətt qalınlığı</label>
+<input type="range" id="width" min="1" max="15" value="3">
+<canvas id="boardCanvas" width="900" height="500"></canvas>
+<div class="tools">
+<button class="action" onclick="undo()">Geri al</button>
+<button class="action" onclick="clearBoard()">Lövhəni təmizlə</button>
+<button class="action" onclick="saveBoard()">Şəkil kimi saxla</button>
+</div>
+</section>
+
+<section id="formula" class="panel">
+<h2>Düstur bölməsi</h2>
+<p>Burada fizika düsturlarını yaza bilərsən.</p>
+<label>Düstur</label>
+<input id="formulaInput" placeholder="Məsələn: F = m · a">
+<div class="formula" id="formulaView">F = m · a</div>
+<button class="action" onclick="showFormula()">Düsturu göstər</button>
+</section>
+
+<section id="graph" class="panel">
+<h2>Qrafik qurucu</h2>
+<p>y = kx + b funksiyasının qrafikini qur.</p>
+<label>k əmsalı</label>
+<input type="number" id="k" value="2">
+<label>b əmsalı</label>
+<input type="number" id="b" value="0">
+<button class="action" onclick="drawGraph()">Qrafiki çək</button>
+<canvas id="graphCanvas" width="900" height="450"></canvas>
+</section>
+
+<section id="motion" class="panel">
+<h2>Hərəkət animasiyası</h2>
+<p>Cismin hərəkətini müşahidə et.</p>
+<label>Sürət (şərti vahid)</label>
+<input type="range" id="speed" min="1" max="10" value="4">
+<canvas id="motionCanvas" width="900" height="300"></canvas>
+<div class="tools">
+<button class="action" onclick="startMotion()">Başlat</button>
+<button class="action" onclick="stopMotion()">Dayandır</button>
+<button class="action" onclick="resetMotion()">Sıfırla</button>
+</div>
+</section>
+
+<section id="lessons" class="panel">
+<h2>Fizika dərsləri</h2>
+<p>Öz dərs başlıqlarını əlavə et. Bu siyahı hazırda yalnız bu cihazda saxlanılır.</p>
+<label>Dərsin adı</label>
+<input id="lessonTitle" placeholder="Məsələn: Nyutonun qanunları">
+<label>Dərsin mətni</label>
+<textarea id="lessonText" placeholder="Dərsin məzmununu yaz..."></textarea>
+<button class="action" onclick="addLesson()">Dərsi əlavə et</button>
+<div id="lessonList"></div>
+</section>
+</main>
+
+<script>
+function showTab(id,btn){
+ document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+ document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ btn.classList.add('active');
+ if(id==='graph')drawGraph();
+}
+let tool='pen',drawing=false,startX=0,startY=0,lastX=0,lastY=0;
+const canvas=document.getElementById('boardCanvas');
+const ctx=canvas.getContext('2d');
+let history=[];
+function saveHistory(){history.push(canvas.toDataURL());if(history.length>20)history.shift()}
+function pos(e){
+ const r=canvas.getBoundingClientRect();
+ return {x:(e.clientX-r.left)*canvas.width/r.width,y:(e.clientY-r.top)*canvas.height/r.height};
+}
+canvas.addEventListener('pointerdown',e=>{
+ drawing=true;const p=pos(e);startX=lastX=p.x;startY=lastY=p.y;
+ saveHistory();canvas.setPointerCapture(e.pointerId);
+ if(tool==='pen'||tool==='erase'){ctx.beginPath();ctx.moveTo(p.x,p.y)}
+});
+canvas.addEventListener('pointermove',e=>{
+ if(!drawing)return;
+ const p=pos(e),color=document.getElementById('color').value;
+ ctx.strokeStyle=tool==='erase'?'white':color;
+ ctx.lineWidth=tool==='erase'?24:Number(document.getElementById('width').value);
+ ctx.lineCap='round';ctx.lineJoin='round';
+ if(tool==='pen'||tool==='erase'){ctx.lineTo(p.x,p.y);ctx.stroke();lastX=p.x;lastY=p.y}
+});
+canvas.addEventListener('pointerup',e=>{
+ if(!drawing)return;drawing=false;
+ const p=pos(e),dx=p.x-startX,dy=p.y-startY;
+ ctx.strokeStyle=document.getElementById('color').value;
+ ctx.lineWidth=Number(document.getElementById('width').value);
+ ctx.lineCap='round';
+ if(tool==='line'){ctx.beginPath();ctx.moveTo(startX,startY);ctx.lineTo(p.x,p.y);ctx.stroke()}
+ if(tool==='arrow'){
+  const a=Math.atan2(dy,dx),head=18;
+  ctx.beginPath();ctx.moveTo(startX,startY);ctx.lineTo(p.x,p.y);
+  ctx.lineTo(p.x-head*Math.cos(a-.5),p.y-head*Math.sin(a-.5));
+  ctx.moveTo(p.x,p.y);ctx.lineTo(p.x-head*Math.cos(a+.5),p.y-head*Math.sin(a+.5));ctx.stroke();
+ }
+ if(tool==='rect'){ctx.strokeRect(startX,startY,dx,dy)}
+ if(tool==='circle'){ctx.beginPath();ctx.ellipse(startX+dx/2,startY+dy/2,Math.abs(dx/2),Math.abs(dy/2),0,0,Math.PI*2);ctx.stroke()}
+});
+function undo(){
+ if(!history.length)return;
+ const img=new Image();img.onload=()=>{ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0)};
+ img.src=history.pop();
+}
+function clearBoard(){saveHistory();ctx.clearRect(0,0,canvas.width,canvas.height)}
+function saveBoard(){
+ const a=document.createElement('a');a.download='fizika-lab-lovhe.png';a.href=canvas.toDataURL();a.click();
+}
+function showFormula(){
+ document.getElementById('formulaView').textContent=document.getElementById('formulaInput').value||'Düstur daxil edilməyib';
+}
+function drawGraph(){
+ const c=document.getElementById('graphCanvas'),g=c.getContext('2d');
+ const k=Number(document.getElementById('k').value),b=Number(document.getElementById('b').value);
+ g.clearRect(0,0,c.width,c.height);
+ const ox=c.width/2,oy=c.height/2,scale=35;
+ g.strokeStyle='#e1e7ef';g.lineWidth=1;
+ for(let x=0;x<c.width;x+=scale){g.beginPath();g.moveTo(x,0);g.lineTo(x,c.height);g.stroke()}
+ for(let y=0;y<c.height;y+=scale){g.beginPath();g.moveTo(0,y);g.lineTo(c.width,y);g.stroke()}
+ g.strokeStyle='#263b59';g.lineWidth=2;
+ g.beginPath();g.moveTo(0,oy);g.lineTo(c.width,oy);g.moveTo(ox,0);g.lineTo(ox,c.height);g.stroke();
+ g.strokeStyle='#1764c0';g.lineWidth=3;g.beginPath();
+ for(let px=0;px<=c.width;px++){
+  const x=(px-ox)/scale,y=k*x+b,py=oy-y*scale;
+  if(px===0)g.moveTo(px,py);else g.lineTo(px,py);
+ }
+ g.stroke();
+}
+let ballX=35,animation=null;
+const mc=document.getElementById('motionCanvas'),mg=mc.getContext('2d');
+function paintBall(){
+ mg.clearRect(0,0,mc.width,mc.height);
+ mg.strokeStyle='#9aa9bd';mg.lineWidth=3;mg.beginPath();mg.moveTo(0,230);mg.lineTo(mc.width,230);mg.stroke();
+ mg.fillStyle='#1764c0';mg.beginPath();mg.arc(ballX,200,25,0,Math.PI*2);mg.fill();
+}
+function moveBall(){
+ ballX+=Number(document.getElementById('speed').value);
+ if(ballX>mc.width+25)ballX=-25;
+ paintBall();animation=requestAnimationFrame(moveBall);
+}
+function startMotion(){if(!animation)moveBall()}
+function stopMotion(){if(animation){cancelAnimationFrame(animation);animation=null}}
+function resetMotion(){stopMotion();ballX=35;paintBall()}
+paintBall();
+
+function addLesson(){
+ const title=document.getElementById('lessonTitle').value.trim();
+ const content=document.getElementById('lessonText').value.trim();
+ if(!title||!content){alert('Dərsin adını və mətnini yaz.');return}
+ const lessons=JSON.parse(localStorage.getItem('fizikaLessons')||'[]');
+ lessons.push({title,content});localStorage.setItem('fizikaLessons',JSON.stringify(lessons));
+ document.getElementById('lessonTitle').value='';
+ document.getElementById('lessonText').value='';showLessons();
+}
+function showLessons(){
+ const lessons=JSON.parse(localStorage.getItem('fizikaLessons')||'[]');
+ document.getElementById('lessonList').innerHTML=lessons.map((l,i)=>
+  `<div class="lesson"><b>${escapeHTML(l.title)}</b><p>${escapeHTML(l.content).replace(/\n/g,'<br>')}</p><button onclick="deleteLesson(${i})">Sil</button></div>`
+ ).join('');
+}
+function escapeHTML(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function deleteLesson(i){
+ const lessons=JSON.parse(localStorage.getItem('fizikaLessons')||'[]');
+ lessons.splice(i,1);localStorage.setItem('fizikaLessons',JSON.stringify(lessons));showLessons();
+}
+showLessons();drawGraph();
+</script>
+</body>
+</html>
